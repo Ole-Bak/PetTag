@@ -1,0 +1,299 @@
+<section class="min-h-screen bg-[#FFF8F0] pt-20 sm:pt-32 pb-20 active">
+  <div class="container mx-auto px-4 md:px-6 max-w-[800px]">
+    <div class="flex items-center" style="gap: 16px; margin-bottom: 32px">
+      <button
+        routerLink="/dashboard"
+        class="flex items-center justify-center w-11 h-11 bg-white border border-transparent rounded-full shadow-sm text-[#FF8C42]"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m12 19-7-7 7-7"></path>
+          <path d="M19 12H5"></path>
+        </svg>
+      </button>
+      <h2 style="margin: 0" class="text-3xl font-bold text-[#3D2B1F]">Register Tag</h2>
+    </div>
+
+    <form (ngSubmit)="handleRegisterTag($event)">
+      <div
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM5.5 10C3.567 10 2 11.567 2 13.5C2 15.433 3.567 17 5.5 17C7.433 17 9 15.433 9 13.5C9 11.567 7.433 10 5.5 10ZM18.5 10C16.567 10 15 11.567 15 13.5C15 15.433 16.567 17 18.5 17C20.433 17 22 15.433 22 13.5C22 11.567 20.433 10 18.5 10ZM12 14C8.686 14 6 16.686 6 20V22H18V20C18 16.686 15.314 14 12 14Z' fill='%233D2B1F' opacity='0.03'/%3E%3C/svg%3E&quot;);
+          background-repeat: repeat;
+          background-size: 24px;
+        "
+        class="mb-[24px] bg-white rounded-3xl p-6 shadow-lg border border-[#E8DCCB]/50 transition-transform hover:-translate-y-1 hover:shadow-xl duration-300 ease-in-out"
+      >
+        <h3 style="margin-bottom: 24px; font-size: 1.2rem" class="font-bold text-[#3D2B1F]">
+          Pet Information
+        </h3>
+
+        <div class="text-center mb-6">
+          <input
+            type="file"
+            #filePicker
+            class="hidden"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+          />
+
+          <div
+            (click)="filePicker.click()"
+            class="relative mx-auto w-30 h-30 flex items-center justify-center bg-[#fdf2e9] border-2 border-dashed border-[#e8dccb] rounded-full cursor-pointer text-[#7a6556] overflow-hidden transition-all hover:border-[#FF8C42] hover:bg-[#fffcf9] group active:scale-95"
+          >
+            @if (previewUrl) {
+              <img [src]="previewUrl" class="w-full h-full object-cover" />
+              <div
+                class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+              >
+                <span class="text-white text-xs font-bold">Change</span>
+              </div>
+            } @else {
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-camera transition-transform group-hover:scale-110"
+              >
+                <path
+                  d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z"
+                ></path>
+                <circle cx="12" cy="13" r="3"></circle>
+              </svg>
+            }
+          </div>
+
+          <p class="text-[0.9rem] font-bold mt-2 text-[#7A6556]">
+            {{ previewUrl ? 'Photo uploaded' : 'Upload Photo' }}
+          </p>
+        </div>
+        <label class="form-label font-bold block text-[#3D2B1F]" style="margin-bottom: 12px"
+          >Species</label
+        >
+
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          <div
+            (click)="selectSpecies('dog')"
+            [class.border-[#FF8C42]]="selectedSpecies === 'dog'"
+            [class.border-[#E8DCCB]]="selectedSpecies !== 'dog'"
+            [style.background-color]="selectedSpecies === 'dog' ? '#ff8c420d' : 'white'"
+            class="flex flex-col items-center p-6 rounded-2xl border-2 cursor-pointer transition-all bg-white"
+          >
+            <span class="text-2xl">🐶</span>
+            <span class="text-xs mt-1 font-bold">Dog</span>
+          </div>
+
+          <div
+            (click)="selectSpecies('cat')"
+            [class.border-[#FF8C42]]="selectedSpecies === 'cat'"
+            [class.border-[#E8DCCB]]="selectedSpecies !== 'cat'"
+            [style.background-color]="selectedSpecies === 'cat' ? '#ff8c420d' : 'white'"
+            class="flex flex-col items-center p-6 rounded-2xl border-2 cursor-pointer transition-all bg-white"
+          >
+            <span class="text-2xl">🐱</span>
+            <span class="text-xs mt-1 font-bold">Cat</span>
+          </div>
+          <div
+            (click)="selectSpecies('other')"
+            [class.border-[#FF8C42]]="selectedSpecies === 'other'"
+            [class.border-[#E8DCCB]]="selectedSpecies !== 'other'"
+            [style.background-color]="selectedSpecies === 'other' ? '#ff8c420d' : 'white'"
+            class="flex flex-col items-center p-6 rounded-2xl border-2 cursor-pointer transition-all bg-white"
+          >
+            <span class="text-2xl">🦜</span>
+            <span class="text-xs mt-1 font-bold">Other</span>
+          </div>
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label font-bold block mb-1">Pet Name *</label>
+          <input
+            type="text"
+            name="petName"
+            [(ngModel)]="petName"
+            class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+            required=""
+            placeholder="e.g. Buster"
+          />
+        </div>
+
+        <div class="flex" style="gap: 16px; margin-bottom: 16px">
+          <div class="form-group" style="flex: 2">
+            <label class="form-label font-bold block mb-1">Breed</label>
+            <input
+              name="petBreed"
+              [(ngModel)]="petBreed"
+              type="text"
+              class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+              placeholder="e.g. Beagle"
+            />
+          </div>
+          <div class="form-group" style="flex: 1">
+            <label class="form-label font-bold block mb-1">Age</label>
+            <input
+              name="petAge"
+              [(ngModel)]="petAge"
+              type="number"
+              class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+              placeholder="Years"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label font-bold block mb-1">Medical Notes</label>
+          <textarea
+            name="medicalNotes"
+            [(ngModel)]="medicalNotes"
+            class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+            rows="3"
+            placeholder="Allergies, microchip number, etc."
+          ></textarea>
+        </div>
+      </div>
+
+      <div
+        class="card bg-white rounded-3xl p-6 shadow-lg border border-[#E8DCCB]/50 mb-[24px]"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM5.5 10C3.567 10 2 11.567 2 13.5C2 15.433 3.567 17 5.5 17C7.433 17 9 15.433 9 13.5C9 11.567 7.433 10 5.5 10ZM18.5 10C16.567 10 15 11.567 15 13.5C15 15.433 16.567 17 18.5 17C20.433 17 22 15.433 22 13.5C22 11.567 20.433 10 18.5 10ZM12 14C8.686 14 6 16.686 6 20V22H18V20C18 16.686 15.314 14 12 14Z' fill='%233D2B1F' opacity='0.03'/%3E%3C/svg%3E&quot;);
+          background-repeat: repeat;
+          background-size: 24px;
+        "
+      >
+        <h3 style="margin-bottom: 24px; font-size: 1.2rem" class="font-bold text-[#3D2B1F]">
+          Owner Information
+        </h3>
+        <div class="form-group mb-4">
+          <label class="form-label font-bold block mb-1">Owner Name *</label>
+          <input
+            name="ownerName"
+            [(ngModel)]="ownerName"
+            type="text"
+            class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+            required=""
+            value="Alex Doe"
+          />
+        </div>
+        <div class="form-group mb-4">
+          <label class="form-label font-bold block mb-1">Phone Number *</label>
+          <input
+            name="phoneNumber"
+            [(ngModel)]="phoneNumber"
+            type="tel"
+            class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+            required=""
+            placeholder="+1 555 123 4567"
+          />
+        </div>
+        <div class="form-group">
+          <label class="form-label font-bold block mb-1">Address (Optional)</label>
+          <input
+            name="address"
+            [(ngModel)]="address"
+            type="text"
+            class="form-control w-full p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+            placeholder="123 Main St, City"
+          />
+        </div>
+      </div>
+
+      <div
+        class="card bg-white rounded-3xl p-6 shadow-lg border-2 border-[#FF8C42] mb-[32px]"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM5.5 10C3.567 10 2 11.567 2 13.5C2 15.433 3.567 17 5.5 17C7.433 17 9 15.433 9 13.5C9 11.567 7.433 10 5.5 10ZM18.5 10C16.567 10 15 11.567 15 13.5C15 15.433 16.567 17 18.5 17C20.433 17 22 15.433 22 13.5C22 11.567 20.433 10 18.5 10ZM12 14C8.686 14 6 16.686 6 20V22H18V20C18 16.686 15.314 14 12 14Z' fill='%233D2B1F' opacity='0.03'/%3E%3C/svg%3E&quot;);
+          background-repeat: repeat;
+          background-size: 24px;
+        "
+      >
+        <h3
+          style="
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          "
+          class="font-bold text-[#3D2B1F]"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#FF8C42"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-smartphone-nfc"
+          >
+            <rect width="7" height="12" x="2" y="6" rx="1"></rect>
+            <path d="M13 8.32a7.43 7.43 0 0 1 0 7.36"></path>
+            <path d="M16.46 6.21a11.76 11.76 0 0 1 0 11.58"></path>
+            <path d="M19.91 4.1a15.91 15.91 0 0 1 .01 15.8"></path>
+          </svg>
+          Link NFC Tag
+        </h3>
+        <div class="form-group" style="margin: 0">
+          <label class="form-label font-bold block mb-1">Tag ID *</label>
+          <div class="flex" style="gap: 12px">
+            <input
+              name="tagId"
+              [(ngModel)]="tagId"
+              type="text"
+              class="form-control flex-1 p-3 border-2 border-[#E8DCCB] rounded-xl outline-none focus:border-[#FF8C42] bg-white"
+              required=""
+              placeholder="XXXX-XXXX"
+            />
+            <button
+              type="button"
+              class="btn bg-[#6DBF67] text-white text-xl px-2 md:px-4 rounded-[30px] flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-scan"
+              >
+                <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+              </svg>
+              Scan
+            </button>
+          </div>
+          <p style="font-size: 0.85rem; margin-top: 8px" class="text-[#7A6556]">
+            Find the ID on the back of the tag or scan it with your phone.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn w-full bg-[#FF8C42] text-white font-bold py-4 rounded-[30px] shadow-lg hover:bg-[#e67a35] transition-all text-lg"
+      >
+        Save & Activate Tag
+      </button>
+    </form>
+  </div>
+</section>

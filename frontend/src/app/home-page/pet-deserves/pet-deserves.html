@@ -1,0 +1,73 @@
+<section
+  class="relative w-full bg-[#FFF8F1] pt-26 pb-12 md:pt-[200px] md:pb-[100px] overflow-hidden"
+>
+  <div
+    class="absolute top-1/2 -right-20 -translate-y-1/2 w-[600px] h-[600px] bg-[#FF8C42] opacity-[0.08] rounded-full blur-[100px] pointer-events-none"
+  ></div>
+
+  <div class="container mx-auto px-4 md:px-0 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div class="lg:col-span-7 flex flex-col items-start">
+        <div
+          class="inline-flex items-center gap-2 px-4 py-3 bg-[#F4E491] rounded-full text-[#3D2B1F] font-bold text-[12px] tracking-widest mb-6"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"
+            ></path>
+          </svg>
+          Smart NFC Technology
+        </div>
+
+        <h1
+          class="text-3xl md:text-5xl font-bold lg:text-[36px] text-[#3D2B1F] leading-[1.1] mb-8 lg:max-w-max"
+        >
+          Every pet deserves to find its way home.
+        </h1>
+
+        <p class="text-base md:text-xl text-[#8B7E74] mb-10 leading-relaxed max-w-[650px]">
+          Equip your furry friend with a PetTag. Anyone with a smartphone can scan the tag to
+          instantly view vital info and contact you. No apps required.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-5 w-full sm:w-auto">
+          <a
+            [routerLink]="['/login']"
+            [queryParams]="{ mode: 'register' }"
+            class="px-8 py-3 bg-[#FF9D52] text-white font-bold rounded-[30px] shadow-lg shadow-[#FF9D52]/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#FF9D52]/50 transition-all duration-300 ease-out cursor-pointer text-center"
+          >
+            Protect Your Pet
+          </a>
+
+          <a
+            routerLink="/demo"
+            class="px-8 py-3 border-2 border-[#FF9D52] text-[#FF9D52] font-bold rounded-[30px] hover:bg-[#FF8C42] hover:text-white transition-all cursor-pointer text-center"
+          >
+            Try Demo Scan
+          </a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 relative flex justify-center lg:justify-end">
+        <div class="relative w-full max-w-[420px]">
+          <div class="absolute inset-0 bg-[#FFF8F1] opacity-40 rounded-full scale-90"></div>
+          <img
+            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' fill='%236DBF67' opacity='0.1' rx='300'/%3E%3Ccircle cx='300' cy='300' r='200' fill='%23FF8C42' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' font-size='180' text-anchor='middle' dy='.3em'%3E🐕%3C/text%3E%3Crect x='380' y='380' width='120' height='120' rx='30' fill='white' stroke='%23E8DCCB' stroke-width='4'/%3E%3Cpath d='M440 410 v60 M410 440 h60' stroke='%23FF8C42' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E"
+            alt="PetTag Hero"
+            class="relative z-10 w-full h-auto drop-shadow-2xl"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

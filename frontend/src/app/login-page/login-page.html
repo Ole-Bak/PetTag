@@ -1,0 +1,107 @@
+<section class="py-[120px] bg-[#FCF8F1] min-h-screen flex items-center">
+  <div class="container mx-auto px-4 md:px-0">
+    <div class="max-w-[400px] mx-auto">
+      <div
+        class="p-8 rounded-3xl bg-white shadow-lg relative overflow-hidden"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM5.5 10C3.567 10 2 11.567 2 13.5C2 15.433 3.567 17 5.5 17C7.433 17 9 15.433 9 13.5C9 11.567 7.433 10 5.5 10ZM18.5 10C16.567 10 15 11.567 15 13.5C15 15.433 16.567 17 18.5 17C20.433 17 22 15.433 22 13.5C22 11.567 20.433 10 18.5 10ZM12 14C8.686 14 6 16.686 6 20V22H18V20C18 16.686 15.314 14 12 14Z' fill='%233D2B1F' opacity='0.03'/%3E%3C/svg%3E&quot;);
+          background-repeat: repeat;
+          background-size: 24px;
+        "
+      >
+        <div class="flex bg-[#FCF8F1] p-1.5 rounded-[40px] mb-8 border border-[#E8DCCB]/50">
+          <button
+            (click)="toggleAuth('login')"
+            [class.bg-white]="authMode === 'login'"
+            [class.text-[#FF9D52]]="authMode === 'login'"
+            [class.shadow-sm]="authMode === 'login'"
+            [class.text-[#8B7E74]]="authMode !== 'login'"
+            class="flex-1 py-3 text-sm font-bold rounded-[30px] transition-all duration-300"
+          >
+            Log In
+          </button>
+          <button
+            (click)="toggleAuth('register')"
+            [class.bg-white]="authMode === 'register'"
+            [class.text-[#FF9D52]]="authMode === 'register'"
+            [class.shadow-sm]="authMode === 'register'"
+            [class.text-[#8B7E74]]="authMode !== 'register'"
+            class="flex-1 py-3 text-sm font-bold rounded-[30px] transition-all duration-300"
+          >
+            Register
+          </button>
+        </div>
+
+        <form (ngSubmit)="handleAuth()" class="space-y-5 group">
+          @if (authMode === 'register') {
+            <div class="animate-fadeIn">
+              <label class="block text-sm font-bold text-[#3D2B1F] mb-1.5">Full Name</label>
+              <input
+                type="text"
+                name="fullName"
+                [(ngModel)]="nameFieldValue"
+                required
+                class="w-full px-4 py-3 rounded-2xl border-2 border-[#E8DCCB] outline-none bg-white transition-all focus:border-[#FF9D52] focus:ring-4 focus:ring-[#FF9D52]/10"
+                placeholder="John Doe"
+              />
+            </div>
+          }
+
+          <div>
+            <label class="block text-sm font-bold text-[#3D2B1F] mb-1.5">Email Address</label>
+            <input
+              type="email"
+              [(ngModel)]="emailInput"
+              name="email"
+              required
+              class="w-full px-4 py-3 rounded-2xl border-2 border-[#E8DCCB] outline-none bg-white transition-all focus:border-[#FF9D52] focus:ring-4 focus:ring-[#FF9D52]/10 not-placeholder-shown:invalid:border-red-500"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-[#3D2B1F] mb-1.5">Password</label>
+            <input
+              type="password"
+              [(ngModel)]="passwordInput"
+              name="password"
+              required
+              class="w-full px-4 py-3 rounded-2xl border-2 border-[#E8DCCB] outline-none bg-white transition-all focus:border-[#FF9D52] focus:ring-4 focus:ring-[#FF9D52]/10 not-placeholder-shown:invalid:border-red-500"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="w-full bg-[#FF9D52] text-white font-bold py-4 rounded-[50px] mt-2 transition-all duration-300 shadow-lg shadow-[#FF9D52]/40 hover:-translate-y-1 hover:brightness-90 hover:shadow-xl hover:shadow-[#FF9D52]/50 active:scale-95"
+          >
+            @if (authMode === 'login') {
+              Log In
+            } @else {
+              Create Account
+            }
+          </button>
+        </form>
+
+        <div class="flex items-center my-8">
+          <div class="flex-1 h-[1px] bg-[#E8DCCB]"></div>
+          <span class="px-4 text-[#8B7E74] text-[15px] font-bold uppercase tracking-[0.2em]"
+            >OR</span
+          >
+          <div class="flex-1 h-[1px] bg-[#E8DCCB]"></div>
+        </div>
+
+        <button
+          class="w-full flex items-center justify-center gap-3 bg-white border-1 border-[#E8DCCB] py-3.5 rounded-[15px] font-bold text-[#3D2B1F] transition-all hover:bg-[#FCF8F1] hover:border-[#FF9D52]/30"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            class="w-5 h-5"
+            alt="Google"
+          />
+          Continue with Google
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

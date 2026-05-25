@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetTag - Smart NFC Pet ID Tags</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        :root {
+            --primary: #FF8C42;
+            --primary-hover: #e67a35;
+            --secondary: #6DBF67;
+            --accent: #F9E784;
+            --bg: #FFF8F0;
+            --surface: #FFFFFF;
+            --text: #3D2B1F;
+            --text-light: #7A6556;
+            --border: #E8DCCB;
+            --error: #E74C3C;
+            
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+            
+            --shadow-sm: 0 2px 8px rgba(61, 43, 31, 0.05);
+            --shadow-md: 0 8px 24px rgba(61, 43, 31, 0.08);
+            --shadow-lg: 0 12px 32px rgba(61, 43, 31, 0.12);
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --max-width: 1280px;
+        }
+
+        /* --- Resets & Base --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, h5 { font-weight: 800; line-height: 1.2; margin-bottom: 0.5em; }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+        h3 { font-size: 1.5rem; }
+        p { margin-bottom: 1rem; color: var(--text-light); }
+        a { color: var(--primary); text-decoration: none; transition: var(--transition); }
+        a:hover { color: var(--primary-hover); }
+        ul { list-style: none; }
+        img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
+
+        /* --- Layouts --- */
+        .container {
+            width: 100%;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .section { padding: 80px 0; }
+        .section-sm { padding: 40px 0; }
+        
+        .grid { display: grid; gap: 24px; }
+        .flex { display: flex; align-items: center; }
+        .flex-col { display: flex; flex-direction: column; }
+        
+        .text-center { text-align: center; }
+
+        /* --- Components --- */
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 14px rgba(255, 140, 66, 0.4); }
+        .btn-primary:hover { background: var(--primary-hover); box-shadow: 0 6px 20px rgba(255, 140, 66, 0.5); transform: translateY(-2px); }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-secondary:hover { background: #5ca657; transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover { background: var(--primary); color: white; }
+        .btn-white { background: white; color: var(--primary); box-shadow: var(--shadow-sm); }
+        
+        .btn-social {
+            background: white; border: 1px solid var(--border); color: var(--text);
+            width: 100%; padding: 12px; border-radius: var(--radius-md);
+            font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 12px;
+            cursor: pointer; transition: var(--transition);
+        }
+        .btn-social:hover { background: var(--bg); }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(232, 220, 203, 0.5);
+        }
+        /* Subtle paw pattern texture on cards */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2C9.243 2 7 4.243 7 7C7 9.757 9.243 12 12 12C14.757 12 17 9.757 17 7C17 4.243 14.757 2 12 2ZM5.5 10C3.567 10 2 11.567 2 13.5C2 15.433 3.567 17 5.5 17C7.433 17 9 15.433 9 13.5C9 11.567 7.433 10 5.5 10ZM18.5 10C16.567 10 15 11.567 15 13.5C15 15.433 16.567 17 18.5 17C20.433 17 22 15.433 22 13.5C22 11.567 20.433 10 18.5 10ZM12 14C8.686 14 6 16.686 6 20V22H18V20C18 16.686 15.314 14 12 14Z' fill='%233D2B1F' opacity='0.03'/%3E%3C/svg%3E");
+            z-index: 0; pointer-events: none;
+        }
+        .card > * { position: relative; z-index: 1; }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+        /* Forms */
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; text-align: left; }
+        .form-label { font-weight: 700; margin-bottom: 6px; font-size: 0.95rem; }
+        .form-control {
+            width: 100%; padding: 14px 16px; border: 2px solid var(--border);
+            border-radius: var(--radius-md); font-family: inherit; font-size: 1rem;
+            transition: var(--transition); background: var(--surface); color: var(--text);
+        }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(255, 140, 66, 0.1); }
+        .error-message { color: var(--error); font-size: 0.85rem; font-weight: 600; margin-top: 4px; display: none; }
+
+        /* Avatar Placeholders */
+        .avatar {
+            width: 80px; height: 80px; border-radius: var(--radius-full);
+            background: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-size: 32px; border: 4px solid white; box-shadow: var(--shadow-sm);
+        }
+        .avatar-lg { width: 120px; height: 120px; font-size: 48px; border-width: 6px; margin: 0 auto; }
+        .avatar-sm { width: 48px; height: 48px; font-size: 20px; border-width: 2px; }
+
+        /* Status Badge */
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px;
+            border-radius: var(--radius-full); font-size: 0.85rem; font-weight: 700;
+        }
+        .badge-active { background: rgba(109, 191, 103, 0.15); color: #2d6628; }
+        .badge-inactive { background: #eee; color: #666; }
+
+        /* --- Navigation --- */
+        .navbar {
+            background: var(--bg);
+            padding: 16px 0;
+            position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 8px; font-size: 1.5rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+        
+        .desktop-nav { display: none; gap: 32px; align-items: center; }
+        .desktop-nav a { font-weight: 700; color: var(--text); }
+        .desktop-nav a:hover, .desktop-nav a.active { color: var(--primary); }
+        
+        .mobile-menu-btn { background: none; border: none; color: var(--text); cursor: pointer; display: block; padding: 8px; }
+        
+        /* Mobile Hamburger Menu */
+        .mobile-menu {
+            display: none; position: absolute; top: 100%; left: 0; right: 0;
+            background: var(--surface); padding: 24px; box-shadow: var(--shadow-md);
+            flex-direction: column; gap: 16px; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+        }
+        .mobile-menu.active { display: flex; }
+        .mobile-menu a { font-size: 1.2rem; font-weight: 700; color: var(--text); padding: 8px 0; border-bottom: 1px solid var(--border); }
+
+        /* Bottom Nav (App Mobile) */
+        .bottom-nav {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0;
+            background: var(--surface); box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 100; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            padding: 12px 24px 24px 24px; justify-content: space-between; align-items: center;
+        }
+        .bottom-nav-item {
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            color: var(--text-light); text-decoration: none; font-size: 0.8rem; font-weight: 700;
+        }
+        .bottom-nav-item.active { color: var(--primary); }
+        .bottom-nav-item i { transition: transform 0.2s; }
+        .bottom-nav-item:hover i { transform: translateY(-2px); }
+
+        /* --- Views System --- */
+        .view { display: none; flex-grow: 1; animation: fadeIn 0.4s ease forwards; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Specific Sections --- */
+        /* Hero */
+        .hero { min-height: 80vh; display: flex; align-items: center; position: relative; overflow: hidden; }
+        .hero::before {
+            content: ''; position: absolute; top: -10%; right: -5%; width: 500px; height: 500px;
+            background: var(--accent); border-radius: 50%; opacity: 0.4; z-index: -1; filter: blur(60px);
+        }
+        .hero-grid { grid-template-columns: 1fr; align-items: center; }
+        
+        /* Icons grid */
+        .icon-box { text-align: center; padding: 24px; }
+        .icon-box i { width: 64px; height: 64px; background: rgba(255, 140, 66, 0.1); color: var(--primary); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; display: inline-block; }
+
+        /* Footer */
+        .footer { background: var(--surface); padding: 60px 0 20px 0; border-top: 1px solid var(--border); margin-top: auto; }
+        .footer-grid { grid-template-columns: 1fr; gap: 40px; margin-bottom: 40px; }
+        .footer h4 { margin-bottom: 20px; font-size: 1.1rem; }
+        .footer ul li { margin-bottom: 12px; }
+        .footer ul li a { color: var(--text-light); }
+        .footer ul li a:hover { color: var(--primary); }
+        .social-links { display: flex; gap: 16px; margin-top: 16px; }
+        .social-links a { background: var(--bg); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text); }
+        .social-links a:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+        .footer-bottom { border-top: 2px dashed var(--border); padding-top: 24px; text-align: center; color: var(--text-light); font-size: 0.9rem; position: relative; }
+        .footer-bottom i { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--surface); padding: 0 16px; color: var(--border); }
+
+        /* Public Scan View */
+        .alert-banner { background: var(--error); color: white; padding: 16px; text-align: center; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .scan-profile-container { margin-top: -60px; text-align: center; position: relative; z-index: 2; padding: 0 24px; }
+        .data-row { display: flex; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid var(--border); }
+        .data-row:last-child { border-bottom: none; }
+        .data-label { color: var(--text-light); font-weight: 700; font-size: 0.9rem; }
+        .data-value { font-weight: 800; text-align: right; }
+
+        /* Dashboard Pet Cards */
+        .pet-card { display: flex; align-items: center; gap: 16px; cursor: pointer; }
+        .pet-card .avatar { width: 64px; height: 64px; flex-shrink: 0; }
+        .pet-card-info { flex-grow: 1; }
+
+        /* Tabs (Login/Register) */
+        .tabs { display: flex; background: var(--bg); border-radius: var(--radius-full); padding: 6px; margin-bottom: 32px; }
+        .tab { flex: 1; text-align: center; padding: 12px; font-weight: 800; cursor: pointer; border-radius: var(--radius-full); color: var(--text-light); transition: var(--transition); }
+        .tab.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow-sm); }
+
+        /* Species Selector */
+        .species-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
+        .species-option { border: 2px solid var(--border); border-radius: var(--radius-md); padding: 16px 8px; text-align: center; cursor: pointer; transition: var(--transition); background: var(--surface); }
+        .species-option.selected { border-color: var(--primary); background: rgba(255,140,66,0.05); }
+        .species-option i { font-size: 28px; font-style: normal; display: block; margin-bottom: 4px; }
+
+        /* --- Media Queries --- */
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+            .mobile-menu-btn { display: none; }
+            .hero-grid { grid-template-columns: 1fr 1fr; }
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+            .grid-4 { grid-template-columns: repeat(4, 1fr); }
+            .grid-2 { grid-template-columns: repeat(2, 1fr); }
+            .footer-grid { grid-template-columns: 2fr 1fr 1fr 1.5fr; }
+            
+            /* Logged-in App mode on desktop uses top nav or sidebar (simulating via top nav here) */
+            .bottom-nav { display: none !important; } 
+            .app-container { max-width: 800px; margin: 0 auto; }
+            .section { padding: 100px 0; }
+        }
+        
+        @media (max-width: 767px) {
+            h1 { font-size: 2rem; }
+            .app-padding-bottom { padding-bottom: 100px; } /* Space for bottom nav */
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar" id="main-nav">
+        <div class="container nav-container">
+            <a href="#" class="logo" onclick="navigateTo('home-view')">
+                <i data-lucide="paw-print"></i> PetTag
+            </a>
+            
+            <div class="desktop-nav" id="desktop-nav-links">
+                </div>
+
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobile-menu-btn">
+                <i data-lucide="menu"></i>
+            </button>
+        </div>
+        
+        <div class="mobile-menu" id="mobile-menu">
+            </div>
+    </nav>
+
+    <main>
+
+        <section id="home-view" class="view active">
+            <div class="container">
+                <div class="hero hero-grid grid">
+                    <div>
+                        <div class="badge badge-active" style="margin-bottom: 16px; background: var(--accent); color: var(--text);">
+                            <i data-lucide="zap" size="16"></i> Smart NFC Technology
+                        </div>
+                        <h1 style="margin-bottom: 24px;">Every pet deserves to find its way home.</h1>
+                        <p style="font-size: 1.2rem; margin-bottom: 32px;">Equip your furry friend with a PetTag. Anyone with a smartphone can scan the tag to instantly view vital info and contact you. No apps required.</p>
+                        <div class="flex" style="gap: 16px;">
+                            <button class="btn btn-primary" onclick="navigateTo('auth-view')">Protect Your Pet</button>
+                            <button class="btn btn-outline" onclick="navigateTo('public-scan-view')">Try Demo Scan</button>
+                        </div>
+                    </div>
+                    <div style="position: relative;">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' fill='%236DBF67' opacity='0.1' rx='300'/%3E%3Ccircle cx='300' cy='300' r='200' fill='%23FF8C42' opacity='0.2'/%3E%3Ctext x='50%25' y='50%25' font-size='180' text-anchor='middle' dy='.3em'%3E🐕%3C/text%3E%3Crect x='380' y='380' width='120' height='120' rx='30' fill='white' stroke='%23E8DCCB' stroke-width='4'/%3E%3Cpath d='M440 410 v60 M410 440 h60' stroke='%23FF8C42' stroke-width='8' stroke-linecap='round'/%3E%3C/svg%3E" alt="PetTag Hero" style="width: 100%; object-fit: contain;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" style="background: white;">
+                <div class="container text-center">
+                    <h2 style="margin-bottom: 48px;">How It Works</h2>
+                    <div class="grid grid-3">
+                        <div class="icon-box">
+                            <i data-lucide="shopping-bag"></i>
+                            <h3>1. Get a Tag</h3>
+                            <p>Order a stylish, durable NFC pet tag from our store and attach it to their collar.</p>
+                        </div>
+                        <div class="icon-box">
+                            <i data-lucide="smartphone-nfc"></i>
+                            <h3>2. Tap to Register</h3>
+                            <p>Tap the tag with your phone to create your pet's online safety profile in seconds.</p>
+                        </div>
+                        <div class="icon-box">
+                            <i data-lucide="bell-ring"></i>
+                            <h3>3. Stay Safe</h3>
+                            <p>If lost, a finder scans the tag. You get instantly notified with their GPS location.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section container">
+                <h2 class="text-center" style="margin-bottom: 48px;">Why Choose PetTag?</h2>
+                <div class="grid grid-4">
+                    <div class="card text-center">
+                        <i data-lucide="droplets" size="40" color="var(--secondary)" style="margin-bottom: 16px;"></i>
+                        <h4>100% Waterproof</h4>
+                        <p style="font-size: 0.9rem;">Ready for rain, mud, and swims.</p>
+                    </div>
+                    <div class="card text-center">
+                        <i data-lucide="battery-charging" size="40" color="var(--primary)" style="margin-bottom: 16px;"></i>
+                        <h4>No Batteries</h4>
+                        <p style="font-size: 0.9rem;">NFC tech means it works forever.</p>
+                    </div>
+                    <div class="card text-center">
+                        <i data-lucide="edit" size="40" color="var(--accent)" style="margin-bottom: 16px;"></i>
+                        <h4>Update Anytime</h4>
+                        <p style="font-size: 0.9rem;">Moved? Change info in the cloud instantly.</p>
+                    </div>
+                    <div class="card text-center">
+                        <i data-lucide="qr-code" size="40" color="var(--text)" style="margin-bottom: 16px;"></i>
+                        <h4>QR Backup</h4>
+                        <p style="font-size: 0.9rem;">Older phones can scan the QR code on back.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" style="background: var(--accent); opacity: 0.9;">
+                <div class="container text-center">
+                    <h2 style="margin-bottom: 48px;">Happy Pets & Owners</h2>
+                    <div class="grid grid-2">
+                        <div class="card" style="text-align: left;">
+                            <div class="flex" style="gap: 16px; margin-bottom: 16px;">
+                                <div class="avatar avatar-sm">👩</div>
+                                <div>
+                                    <h4 style="margin: 0;">Sarah & Max</h4>
+                                    <span style="color: #f39c12;">★★★★★</span>
+                                </div>
+                            </div>
+                            <p style="margin: 0; font-style: italic;">"Max ran out the gate, and within 10 minutes a neighbor scanned his tag and called me. Life saver!"</p>
+                        </div>
+                        <div class="card" style="text-align: left;">
+                            <div class="flex" style="gap: 16px; margin-bottom: 16px;">
+                                <div class="avatar avatar-sm">👨</div>
+                                <div>
+                                    <h4 style="margin: 0;">David & Luna</h4>
+                                    <span style="color: #f39c12;">★★★★★</span>
+                                </div>
+                            </div>
+                            <p style="margin: 0; font-style: italic;">"I love that I can update my phone number without having to engrave a new tag every time. Brilliant idea."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section container text-center">
+                <h2>Ready to protect your best friend?</h2>
+                <p style="margin-bottom: 32px; font-size: 1.1rem;">Join thousands of responsible pet owners today.</p>
+                <button class="btn btn-primary" style="padding: 16px 40px; font-size: 1.2rem;" onclick="navigateTo('auth-view')">Create Free Account</button>
+            </div>
+        </section>
+
+        <section id="about-view" class="view container section">
+            <div class="text-center" style="max-width: 800px; margin: 0 auto 60px auto;">
+                <h1 style="margin-bottom: 24px;">Our Mission</h1>
+                <p style="font-size: 1.2rem;">To ensure no pet ever stays lost. We leverage simple, accessible technology to connect lost pets with their families as quickly and safely as possible.</p>
+            </div>
+
+            <div class="grid grid-4 text-center" style="margin-bottom: 80px;">
+                <div class="card">
+                    <h2 style="color: var(--primary);">10k+</h2>
+                    <p style="margin: 0;">Pets Protected</p>
+                </div>
+                <div class="card">
+                    <h2 style="color: var(--secondary);">50+</h2>
+                    <p style="margin: 0;">Countries</p>
+                </div>
+                <div class="card">
+                    <h2 style="color: var(--text);">4.9★</h2>
+                    <p style="margin: 0;">Average Rating</p>
+                </div>
+                <div class="card">
+                    <h2 style="color: var(--primary);">2k+</h2>
+                    <p style="margin: 0;">Reunions</p>
+                </div>
+            </div>
+
+            <div class="grid grid-2" style="align-items: center; margin-bottom: 80px;">
+                <div>
+                    <h2>Our Story</h2>
+                    <p>PetTag was born out of a personal scare. In 2023, our founder's dog, Barnaby, slipped his leash in a new city. While he had a traditional engraved tag, the phone number was old.</p>
+                    <p>It took hours to find him through local shelters. We realized there had to be a better, dynamic way to manage pet ID. Thus, PetTag was created — combining the durability of a physical tag with the flexibility of the cloud.</p>
+                </div>
+                <div class="card" style="background: var(--secondary); display: flex; justify-content: center; align-items: center; min-height: 300px;">
+                    <div style="font-size: 100px;">🐕‍🦺</div>
+                </div>
+            </div>
+
+            <h2 class="text-center" style="margin-bottom: 40px;">Meet the Pack</h2>
+            <div class="grid grid-3">
+                <div class="card text-center">
+                    <div class="avatar avatar-lg">🧔</div>
+                    <h3 style="margin-top: 16px; margin-bottom: 4px;">Jan Kowalski</h3>
+                    <p>Founder & CEO</p>
+                </div>
+                <div class="card text-center">
+                    <div class="avatar avatar-lg">👩‍🦰</div>
+                    <h3 style="margin-top: 16px; margin-bottom: 4px;">Anna Nowak</h3>
+                    <p>Lead Developer</p>
+                </div>
+                <div class="card text-center">
+                    <div class="avatar avatar-lg">🐶</div>
+                    <h3 style="margin-top: 16px; margin-bottom: 4px;">Barnaby</h3>
+                    <p>Chief Testing Officer</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact-view" class="view container section">
+            <div class="text-center" style="margin-bottom: 48px;">
+                <h1>Get in Touch</h1>
+                <p>Have questions about PetTag? We're here to help.</p>
+            </div>
+
+            <div class="grid grid-2" style="max-width: 1000px; margin: 0 auto; gap: 40px;">
+                <div class="card">
+                    <h3 style="margin-bottom: 24px;">Send us a message</h3>
+                    <form onsubmit="handleForm(event)">
+                        <div class="form-group">
+                            <label class="form-label">Name</label>
+                            <input type="text" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" placeholder="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Subject</label>
+                            <input type="text" class="form-control" placeholder="How can we help?">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control" rows="4" placeholder="Your message here..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+
+                <div>
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 16px;">Contact Info</h3>
+                        <ul style="display: flex; flex-direction: column; gap: 16px;">
+                            <li class="flex" style="gap: 12px;">
+                                <i data-lucide="map-pin" color="var(--primary)"></i>
+                                <span>ul. Zwierzęca 12, 00-001 Warszawa, Polska</span>
+                            </li>
+                            <li class="flex" style="gap: 12px;">
+                                <i data-lucide="mail" color="var(--primary)"></i>
+                                <span>kontakt@pettag.pl</span>
+                            </li>
+                            <li class="flex" style="gap: 12px;">
+                                <i data-lucide="phone" color="var(--primary)"></i>
+                                <span>+48 123 456 789</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="card" style="padding: 0; height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #e0e0e0; border: none;">
+                        <i data-lucide="map" size="48" color="var(--text-light)" style="margin-bottom: 8px;"></i>
+                        <p style="margin: 0; font-weight: 700;">Interactive Map Placeholder</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="auth-view" class="view section container text-center">
+            <div style="max-width: 400px; margin: 0 auto;">
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab active" id="tab-login" onclick="toggleAuth('login')">Log In</div>
+                        <div class="tab" id="tab-register" onclick="toggleAuth('register')">Register</div>
+                    </div>
+
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group" id="auth-name-group" style="display: none;">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="auth-name" placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" required placeholder="you@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;" id="auth-submit-btn">Log In</button>
+                    </form>
+
+                    <div style="display: flex; align-items: center; margin: 24px 0;">
+                        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                        <span style="padding: 0 16px; color: var(--text-light); font-size: 0.9rem; font-weight: 700;">OR</span>
+                        <div style="flex: 1; height: 1px; background: var(--border);"></div>
+                    </div>
+
+                    <button class="btn-social" onclick="handleLogin(event)">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.66 15.63 16.88 16.79 15.71 17.57V20.34H19.28C21.36 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4"/>
+                            <path d="M12 23C14.97 23 17.46 22.02 19.28 20.34L15.71 17.57C14.72 18.23 13.46 18.63 12 18.63C9.14 18.63 6.71 16.7 5.84 14.09H2.18V16.94C3.99 20.53 7.7 23 12 23Z" fill="#34A853"/>
+                            <path d="M5.84 14.09C5.62 13.43 5.49 12.73 5.49 12C5.49 11.27 5.62 10.57 5.84 9.91V7.06H2.18C1.43 8.55 1 10.22 1 12C1 13.78 1.43 15.45 2.18 16.94L5.84 14.09Z" fill="#FBBC05"/>
+                            <path d="M12 5.38C13.62 5.38 15.06 5.94 16.21 7.02L19.36 3.87C17.45 2.09 14.97 1 12 1C7.7 1 3.99 3.47 2.18 7.06L5.84 9.91C6.71 7.3 9.14 5.38 12 5.38Z" fill="#EA4335"/>
+                        </svg>
+                        Continue with Google
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="dashboard-view" class="view section app-padding-bottom">
+            <div class="container app-container">
+                <div style="margin-bottom: 32px;">
+                    <p style="margin: 0; font-weight: 700; color: var(--text-light);">Welcome back,</p>
+                    <h1 style="margin-bottom: 8px;">Alex! 👋</h1>
+                </div>
+
+                <div class="flex" style="justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 style="margin: 0; font-size: 1.5rem;">My Tags (2)</h2>
+                    <button class="btn btn-outline" style="padding: 8px 16px; font-size: 1rem;" onclick="navigateTo('add-tag-view')">
+                        <i data-lucide="plus" size="18"></i> Add
+                    </button>
+                </div>
+
+                <div class="grid" style="gap: 16px;">
+                    <div class="card pet-card" onclick="navigateTo('pet-profile-view')">
+                        <div class="avatar">🐶</div>
+                        <div class="pet-card-info">
+                            <h3 style="margin-bottom: 4px; font-size: 1.3rem;">Buster</h3>
+                            <p style="margin-bottom: 8px; font-size: 0.9rem;">Golden Retriever</p>
+                            <div class="badge badge-active">
+                                <i data-lucide="check-circle" size="14"></i> Active Tag
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" color="var(--border)"></i>
+                    </div>
+
+                    <div class="card pet-card">
+                        <div class="avatar" style="background: #E8DCCB;">🐱</div>
+                        <div class="pet-card-info">
+                            <h3 style="margin-bottom: 4px; font-size: 1.3rem;">Luna</h3>
+                            <p style="margin-bottom: 8px; font-size: 0.9rem;">Siamese Mix</p>
+                            <div class="badge badge-active">
+                                <i data-lucide="check-circle" size="14"></i> Active Tag
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" color="var(--border)"></i>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-top: 32px;" onclick="navigateTo('add-tag-view')">
+                    <i data-lucide="tag"></i> Register New Tag
+                </button>
+            </div>
+        </section>
+
+        <section id="add-tag-view" class="view section app-padding-bottom">
+            <div class="container app-container">
+                <div class="flex" style="gap: 16px; margin-bottom: 32px;">
+                    <button class="btn btn-white" style="padding: 10px; border-radius: 50%;" onclick="navigateTo('dashboard-view')">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <h2 style="margin: 0;">Register Tag</h2>
+                </div>
+
+                <form onsubmit="handleRegisterTag(event)">
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 24px; font-size: 1.2rem;">Pet Information</h3>
+                        
+                        <div class="text-center" style="margin-bottom: 24px;">
+                            <div class="avatar avatar-lg" style="background: var(--bg); border: 2px dashed var(--border); cursor: pointer; color: var(--text-light);">
+                                <i data-lucide="camera" size="32"></i>
+                            </div>
+                            <p style="font-size: 0.9rem; font-weight: 700; margin-top: 8px;">Upload Photo</p>
+                        </div>
+
+                        <label class="form-label" style="display:block; margin-bottom:12px;">Species</label>
+                        <div class="species-grid" id="species-selector">
+                            <div class="species-option selected" onclick="selectSpecies(this)">
+                                <i>🐶</i><span>Dog</span>
+                            </div>
+                            <div class="species-option" onclick="selectSpecies(this)">
+                                <i>🐱</i><span>Cat</span>
+                            </div>
+                            <div class="species-option" onclick="selectSpecies(this)">
+                                <i>🦜</i><span>Other</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Pet Name *</label>
+                            <input type="text" class="form-control" required placeholder="e.g. Buster">
+                        </div>
+                        <div class="flex" style="gap: 16px;">
+                            <div class="form-group" style="flex: 2;">
+                                <label class="form-label">Breed</label>
+                                <input type="text" class="form-control" placeholder="e.g. Beagle">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label class="form-label">Age</label>
+                                <input type="number" class="form-control" placeholder="Years">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Medical Notes</label>
+                            <textarea class="form-control" rows="3" placeholder="Allergies, microchip number, etc."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 24px;">
+                        <h3 style="margin-bottom: 24px; font-size: 1.2rem;">Owner Information</h3>
+                        <div class="form-group">
+                            <label class="form-label">Owner Name *</label>
+                            <input type="text" class="form-control" required value="Alex Doe">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control" required placeholder="+1 555 123 4567">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Address (Optional)</label>
+                            <input type="text" class="form-control" placeholder="123 Main St, City">
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom: 32px; border: 2px solid var(--primary);">
+                        <h3 style="margin-bottom: 16px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="smartphone-nfc" color="var(--primary)"></i> Link NFC Tag
+                        </h3>
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label">Tag ID *</label>
+                            <div class="flex" style="gap: 12px;">
+                                <input type="text" class="form-control" required placeholder="XXXX-XXXX" style="flex: 1;">
+                                <button type="button" class="btn btn-secondary" style="padding: 14px;"><i data-lucide="scan"></i> Scan</button>
+                            </div>
+                            <p style="font-size: 0.85rem; margin-top: 8px;">Find the ID on the back of the tag or scan it with your phone.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Save & Activate Tag</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="pet-profile-view" class="view section app-padding-bottom">
+            <div class="container app-container">
+                <div class="flex" style="justify-content: space-between; margin-bottom: 32px;">
+                    <button class="btn btn-white" style="padding: 10px; border-radius: 50%;" onclick="navigateTo('dashboard-view')">
+                        <i data-lucide="arrow-left"></i>
+                    </button>
+                    <button class="btn btn-white" style="padding: 10px; border-radius: 50%;">
+                        <i data-lucide="edit-2"></i>
+                    </button>
+                </div>
+
+                <div class="card text-center" style="margin-bottom: 24px; padding-top: 40px;">
+                    <div class="avatar avatar-lg" style="margin-top: -80px; margin-bottom: 16px;">🐶</div>
+                    <h1 style="margin-bottom: 4px;">Buster</h1>
+                    <p style="margin-bottom: 16px; font-weight: 700;">Golden Retriever • 3 Years</p>
+                    <div class="badge badge-active" style="margin-bottom: 24px;">
+                        <i data-lucide="check-circle" size="14"></i> ID: BSTR-1234
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 12px;">Owner Info</h3>
+                    <div class="data-row">
+                        <span class="data-label">Name</span>
+                        <span class="data-value">Alex Doe</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Phone</span>
+                        <span class="data-value"><a href="tel:+15551234567">+1 555 123 4567</a></span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Address</span>
+                        <span class="data-value">123 Main St, Springfield</span>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 32px; background: rgba(249, 231, 132, 0.2); border-color: var(--accent);">
+                    <h3 style="margin-bottom: 12px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px;">
+                        <i data-lucide="info" color="var(--primary)"></i> Medical Notes
+                    </h3>
+                    <p style="margin: 0; color: var(--text); font-weight: 600;">Very friendly but allergic to chicken. Microchip: 98102000000.</p>
+                </div>
+
+                <button class="btn btn-secondary" style="width: 100%;" onclick="navigateTo('public-scan-view')">
+                    <i data-lucide="eye"></i> Simulate Public NFC Scan
+                </button>
+            </div>
+        </section>
+
+
+        <section id="public-scan-view" class="view" style="background: var(--surface);">
+            
+            <div class="alert-banner">
+                <i data-lucide="alert-triangle"></i> This pet might be lost!
+            </div>
+
+            <div style="background: var(--accent); height: 150px; position: relative;">
+                </div>
+
+            <div class="container scan-profile-container" style="max-width: 600px; margin-bottom: 40px;">
+                <div class="avatar avatar-lg" style="margin-bottom: 16px; background: white; font-size: 60px;">🐶</div>
+                <h1 style="font-size: 2.5rem; margin-bottom: 8px;">Hi, I'm Buster!</h1>
+                <p style="font-size: 1.1rem; font-weight: 700; color: var(--text);">If you found me, please help me get home to my family.</p>
+            </div>
+
+            <div class="container" style="max-width: 600px; padding-bottom: 80px;">
+                <div class="card" style="margin-bottom: 24px; border-left: 6px solid var(--primary);">
+                    <p style="text-transform: uppercase; font-size: 0.8rem; font-weight: 800; color: var(--text-light); margin-bottom: 8px;">My Human</p>
+                    <h2 style="margin-bottom: 16px;">Alex Doe</h2>
+                    
+                    <div class="flex-col" style="gap: 12px;">
+                        <a href="tel:+15551234567" class="btn btn-primary" style="width: 100%; font-size: 1.2rem; padding: 16px;">
+                            <i data-lucide="phone-call"></i> Call Alex
+                        </a>
+                        <a href="sms:+15551234567" class="btn btn-outline" style="width: 100%; padding: 16px;">
+                            <i data-lucide="message-square"></i> Send Text
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 32px; background: var(--bg);">
+                    <p style="text-transform: uppercase; font-size: 0.8rem; font-weight: 800; color: var(--text-light); margin-bottom: 8px;">Important Info</p>
+                    <p style="margin-bottom: 0; font-weight: 700; color: var(--text);">Very friendly but allergic to chicken. Microchip: 98102000000.</p>
+                </div>
+
+                <div class="text-center">
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 16px;">Powered by PetTag</p>
+                    <button class="btn btn-white" style="font-size: 0.9rem;" onclick="navigateTo('home-view')">Exit Demo</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer" id="main-footer">
+        <div class="container">
+            <div class="grid footer-grid">
+                <div>
+                    <a href="#" class="logo" style="margin-bottom: 16px; display: inline-flex;">
+                        <i data-lucide="paw-print"></i> PetTag
+                    </a>
+                    <p style="font-weight: 700; margin-bottom: 16px;">Every pet deserves to find its way home.</p>
+                    <p style="font-size: 0.9rem;">Modern NFC ID tags ensuring quick and safe returns for your furry friends.</p>
+                    <div class="social-links">
+                        <a href="#"><i data-lucide="facebook" size="20"></i></a>
+                        <a href="#"><i data-lucide="instagram" size="20"></i></a>
+                        <a href="#"><i data-lucide="twitter" size="20"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#" onclick="navigateTo('home-view')">Home</a></li>
+                        <li><a href="#" onclick="navigateTo('about-view')">About Us</a></li>
+                        <li><a href="#" onclick="navigateTo('contact-view')">Contact</a></li>
+                        <li><a href="#" onclick="navigateTo('auth-view')">Login / Register</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Company Info</h4>
+                    <ul>
+                        <li style="font-weight: 700; color: var(--text);">PetTag Sp. z o.o.</li>
+                        <li class="flex" style="gap: 8px; color: var(--text-light);"><i data-lucide="map-pin" size="16"></i> ul. Zwierzęca 12, 00-001 Warszawa, Polska</li>
+                        <li class="flex" style="gap: 8px; color: var(--text-light);"><i data-lucide="mail" size="16"></i> kontakt@pettag.pl</li>
+                        <li class="flex" style="gap: 8px; color: var(--text-light);"><i data-lucide="phone" size="16"></i> +48 123 456 789</li>
+                        <li style="color: var(--text-light);">NIP: 123-456-78-90</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <i data-lucide="paw-print" size="24"></i>
+                <p style="margin: 0;">&copy; 2025 PetTag Sp. z o.o. Wszelkie prawa zastrzeżone.</p>
+            </div>
+        </div>
+    </footer>
+
+    <nav class="bottom-nav flex" id="bottom-nav">
+        <a href="#" class="bottom-nav-item active" onclick="navigateTo('dashboard-view')">
+            <i data-lucide="home"></i> Home
+        </a>
+        <a href="#" class="bottom-nav-item" onclick="navigateTo('dashboard-view')">
+            <i data-lucide="paw-print"></i> My Tags
+        </a>
+        <a href="#" class="bottom-nav-item" onclick="navigateTo('public-scan-view')">
+            <i data-lucide="scan"></i> Scan
+        </a>
+        <a href="#" class="bottom-nav-item">
+            <i data-lucide="user"></i> Profile
+        </a>
+    </nav>
+
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // App State
+        let isLoggedIn = false;
+        
+        const publicPages = ['home-view', 'about-view', 'contact-view', 'auth-view'];
+        const appPages = ['dashboard-view', 'add-tag-view', 'pet-profile-view'];
+
+        // DOM Elements
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mainNav = document.getElementById('main-nav');
+        const desktopNavLinks = document.getElementById('desktop-nav-links');
+        const mainFooter = document.getElementById('main-footer');
+        const bottomNav = document.getElementById('bottom-nav');
+
+        // Initial UI Setup
+        updateNavUI();
+
+        // Navigation Function
+        function navigateTo(viewId) {
+            // Hide all views
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            
+            // Show target view
+            document.getElementById(viewId).classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Close mobile menu if open
+            if(mobileMenu.classList.contains('active')) {
+                toggleMobileMenu();
+            }
+
+            // Layout Adjustments based on view type
+            if (viewId === 'public-scan-view') {
+                // Special standalone view
+                mainNav.style.display = 'none';
+                mainFooter.style.display = 'none';
+                bottomNav.style.display = 'none';
+            } 
+            else if (appPages.includes(viewId)) {
+                // Logged In App View
+                isLoggedIn = true;
+                updateNavUI();
+                mainNav.style.display = 'block';
+                mainFooter.style.display = 'none';
+                
+                // Show bottom nav ONLY on mobile screens (<768px)
+                if (window.innerWidth < 768) {
+                    bottomNav.style.display = 'flex';
+                } else {
+                    bottomNav.style.display = 'none';
+                }
+            } 
+            else {
+                // Public View
+                isLoggedIn = false;
+                updateNavUI();
+                mainNav.style.display = 'block';
+                mainFooter.style.display = 'block';
+                bottomNav.style.display = 'none';
+            }
+            
+            // Re-render icons just in case dynamic content was added
+            lucide.createIcons();
+        }
+
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Update Navigation Links based on Auth State
+        function updateNavUI() {
+            let linksHTML = '';
+            
+            if (isLoggedIn) {
+                linksHTML = `
+                    <a href="#" onclick="navigateTo('dashboard-view')">Home</a>
+                    <a href="#" onclick="navigateTo('dashboard-view')">My Tags</a>
+                    <a href="#" onclick="navigateTo('add-tag-view')">Add Tag</a>
+                    <a href="#">Profile</a>
+                    <button class="btn btn-outline" style="padding: 8px 20px; border-width: 2px;" onclick="handleLogout()">Logout</button>
+                `;
+            } else {
+                linksHTML = `
+                    <a href="#" onclick="navigateTo('home-view')">Home</a>
+                    <a href="#" onclick="navigateTo('about-view')">About Us</a>
+                    <a href="#" onclick="navigateTo('contact-view')">Contact</a>
+                    <button class="btn btn-primary" style="padding: 8px 24px;" onclick="navigateTo('auth-view')">Login / Register</button>
+                `;
+            }
+            
+            desktopNavLinks.innerHTML = linksHTML;
+            mobileMenu.innerHTML = linksHTML;
+        }
+
+        // Auth Tabs Toggle
+        function toggleAuth(type) {
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const nameGroup = document.getElementById('auth-name-group');
+            const submitBtn = document.getElementById('auth-submit-btn');
+
+            if (type === 'login') {
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+                nameGroup.style.display = 'none';
+                submitBtn.textContent = 'Log In';
+            } else {
+                tabRegister.classList.add('active');
+                tabLogin.classList.remove('active');
+                nameGroup.style.display = 'block';
+                submitBtn.textContent = 'Create Account';
+            }
+        }
+
+        // Form Handlers
+        function handleLogin(e) {
+            e.preventDefault();
+            // Simulate login
+            navigateTo('dashboard-view');
+        }
+
+        function handleLogout() {
+            isLoggedIn = false;
+            navigateTo('home-view');
+        }
+
+        function handleForm(e) {
+            e.preventDefault();
+            alert("Message sent successfully!");
+            e.target.reset();
+        }
+
+        function handleRegisterTag(e) {
+            e.preventDefault();
+            alert("Tag registered successfully!");
+            navigateTo('dashboard-view');
+        }
+
+        // Species Selector logic in Add Tag form
+        function selectSpecies(element) {
+            document.querySelectorAll('.species-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        // Listen for window resize to handle bottom nav visibility correctly
+        window.addEventListener('resize', () => {
+            if (isLoggedIn && !document.getElementById('public-scan-view').classList.contains('active')) {
+                if (window.innerWidth < 768) {
+                    bottomNav.style.display = 'flex';
+                } else {
+                    bottomNav.style.display = 'none';
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
